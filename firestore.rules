@@ -1,0 +1,65 @@
+rules_version = '2';
+
+/* Saxton House Hunt — Firestore rules
+   ------------------------------------------------------------------
+   Paste into Firebase console → Firestore Database → Rules → Publish.
+
+   THIS FILE IS THE SECURITY BOUNDARY. The matching ALLOWED list in
+   assets/app.js only produces a friendlier error message; a check that
+   runs in the browser stops nobody. Anyone can sign in with Google —
+   what keeps them out of this data is the allowlist below.
+
+   Two accounts, hard-coded. That is deliberate: an invite-code/household
+   model exists to add people whose uid you don't know yet, and there is
+   nobody else to add here. If that changes, lift the household pattern
+   out of the mise rules rather than loosening these.
+
+   Publishing the site to a public GitHub repo is fine. The Firebase web
+   config is a public identifier, not a secret — it ships in the JS of
+   every Firebase web app. Access is decided here and by the Authorized
+   domains list in Authentication → Settings.                            */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- EDIT THESE TWO LINES, lowercase, then Publish ----
+    function allowed() {
+      return [
+        'paste_your_email',
+        'paste_her_email'
+      ];
+    }
+
+    function ok() {
+      return request.auth != null
+             && request.auth.token.email_verified == true
+             && request.auth.token.email.lower() in allowed();
+    }
+
+    /* Listings. Create and update carry an incoming document, so they can
+       be size-capped — photos are stored as data URLs inside the doc and
+       Firestore's hard limit is 1 MiB. */
+    match /listings/{id} {
+      allow read: if ok();
+      allow create, update: if ok() && request.resource.size() < 1048576;
+
+      /* DELETE MUST STAY SEPARATE. request.resource does not exist on a
+         delete, so folding the size cap into one `allow write` silently
+         denies every deletion — the same trap that made unticking a
+         grocery item bounce back in mise. */
+      allow delete: if ok();
+    }
+
+    // Shared search preferences — one document, both of you write it.
+    match /prefs/{id} {
+      allow read: if ok();
+      allow create, update: if ok() && request.resource.size() < 32768;
+      allow delete: if false;
+    }
+
+    // Nothing else in the database is reachable.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

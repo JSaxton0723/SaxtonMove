@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saxton House Hunt — St. Louis</title>
+<meta name="description" content="A shared shortlist for the St. Louis house hunt.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F7F2E8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15120F" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 16 L16 5 L28 16' fill='none' stroke='%23D99A4E' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M7.5 14 v13 h17 v-13' fill='none' stroke='%239A5A18' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<!-- ============ SIGN-IN GATE ============ -->
+<div id="gate" class="gate">
+  <div class="gate-card">
+    <svg class="gate-arch" viewBox="0 0 120 70" aria-hidden="true">
+      <path d="M14 68 C 16 8, 104 8, 106 68" fill="none" stroke="var(--sage)" stroke-width="6" opacity="0.5"/>
+    </svg>
+    <h1 class="gate-title">Saxton House Hunt</h1>
+    <p class="gate-sub">St. Louis · your shared shortlist</p>
+    <button class="btn btn-primary gate-btn" id="signin-btn">
+      <i class="ti ti-brand-google" aria-hidden="true"></i> Sign in with Google
+    </button>
+    <p class="gate-msg" id="gate-msg"></p>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="wrap" id="app" style="display:none;">
+  <h1 class="sr-only">Saxton St. Louis House Hunt</h1>
+
+  <div class="hero">
+    <header class="top">
+      <div>
+        <h1 class="logo">Saxton House Hunt</h1>
+        <p class="tagline">St. Louis · your shared shortlist</p>
+      </div>
+      <div class="top-right">
+        <span class="chip"><i class="ti ti-home-search" aria-hidden="true"></i> <span id="hero-count">—</span></span>
+        <div class="theme-tog" id="theme-tog" role="group" aria-label="Appearance">
+          <button data-t="light" title="Day" aria-label="Day"><i class="ti ti-sun" aria-hidden="true"></i></button>
+          <button data-t="auto" title="Match my device" aria-label="Match my device"><i class="ti ti-device-desktop" aria-hidden="true"></i></button>
+          <button data-t="dark" title="Night" aria-label="Night"><i class="ti ti-moon" aria-hidden="true"></i></button>
+        </div>
+        <button class="btn btn-ghost signout-btn" id="signout-btn" title="Sign out">
+          <span id="who"></span> <i class="ti ti-logout" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <svg class="skyline" viewBox="0 0 700 44" preserveAspectRatio="none" aria-hidden="true">
+      <g fill="var(--sage)" opacity="0.30">
+        <rect x="8" y="20" width="16" height="24"/>
+        <rect x="30" y="26" width="12" height="18"/>
+        <rect x="48" y="14" width="18" height="30"/>
+        <rect x="72" y="24" width="11" height="20"/>
+        <rect x="89" y="30" width="20" height="14"/>
+        <path d="M112 44 L112 34 L122 26 L132 34 L132 44 Z"/>
+        <rect x="138" y="28" width="14" height="16"/>
+        <rect x="560" y="30" width="18" height="14"/>
+        <path d="M584 44 L584 33 L594 25 L604 33 L604 44 Z"/>
+        <rect x="610" y="22" width="14" height="22"/>
+        <rect x="630" y="28" width="11" height="16"/>
+        <rect x="647" y="16" width="17" height="28"/>
+        <rect x="670" y="26" width="14" height="18"/>
+      </g>
+      <path d="M291 44 C 293 10, 407 10, 409 44" fill="none" stroke="var(--sage)" stroke-width="5" opacity="0.45"/>
+    </svg>
+  </div>
+
+  <div id="sync-status" class="sync-status"></div>
+
+  <!-- ============ PREFERENCES ============ -->
+  <div class="card prefs-panel">
+    <div class="prefs-head">
+      <h2 class="prefs-title"><i class="ti ti-adjustments" aria-hidden="true"></i> What we're looking for</h2>
+      <span class="prefs-summary" id="prefs-summary"></span>
+      <button class="btn btn-ghost" id="prefs-toggle">Edit <i class="ti ti-chevron-down" id="prefs-chevron" aria-hidden="true"></i></button>
+    </div>
+    <div class="prefs-body" id="prefs-body" style="display:none;">
+      <div class="formgrid">
+        <div class="field"><label for="p-price-min">Target price — min</label><input id="p-price-min" type="number" step="5000"></div>
+        <div class="field"><label for="p-price-max">Target price — max</label><input id="p-price-max" type="number" step="5000"></div>
+        <div class="field"><label for="p-commute-good">Great commute (min)</label><input id="p-commute-good" type="number"></div>
+        <div class="field"><label for="p-commute-max">Too far (min)</label><input id="p-commute-max" type="number"></div>
+        <div class="field"><label for="p-park">Park within (mi)</label><input id="p-park" type="number" step="0.05"></div>
+        <div class="field"><label for="p-rate">Mortgage rate (%)</label><input id="p-rate" type="number" step="0.05"></div>
+        <div class="field"><label for="p-down">Down payment (%)</label><input id="p-down" type="number" step="1"></div>
+        <div class="field"><label for="p-work">Work address (commute anchor)</label><input id="p-work" placeholder="e.g. 1 Metropolitan Sq, Clayton"></div>
+      </div>
+      <div class="check-row">
+        <span class="filter-group-label">Must-haves that earn points</span>
+        <label class="check"><input type="checkbox" id="p-mh-garage"> Garage</label>
+        <label class="check"><input type="checkbox" id="p-mh-basement"> Basement</label>
+        <label class="check"><input type="checkbox" id="p-mh-yard"> Fenced yard</label>
+        <label class="check"><input type="checkbox" id="p-mh-hoa"> No HOA</label>
+      </div>
+      <p class="prefs-note">These are shared — change them and they change for both of you. Unticking a must-have redistributes its weight across the ones you kept, so the ranking always adds to 100.</p>
+      <div class="form-actions">
+        <button class="btn btn-primary" id="prefs-save"><i class="ti ti-check" aria-hidden="true"></i> Save preferences</button>
+        <span class="save-hint" id="prefs-saved"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ADD ============ -->
+  <div class="card quickadd-card">
+    <div class="quickadd-row">
+      <input id="qa-url" placeholder="Paste the Zillow / Redfin / MLS link…" class="qa-url">
+      <input id="qa-name" placeholder="Address" class="qa-name">
+      <input id="qa-price" placeholder="Price" type="number" class="qa-price">
+      <button class="btn btn-primary" id="qa-save"><i class="ti ti-bolt" aria-hidden="true"></i> Quick add</button>
+    </div>
+    <button class="link-btn" id="full-form-toggle">+ Add full details instead <i class="ti ti-chevron-down" id="full-chevron" aria-hidden="true"></i></button>
+
+    <div id="full-form" class="full-form" style="display:none;">
+      <div class="shot-grid">
+        <div class="field">
+          <label>Listing info screenshot <span class="field-hint">— autofills price, beds, baths, sqft, taxes, HOA, year</span></label>
+          <div id="cf-shot-info-zone" class="shot-zone" tabindex="0" role="button" aria-label="Drag a screenshot here, click to upload, or paste with Ctrl+V">
+            <i class="ti ti-file-text" aria-hidden="true"></i>
+            <span>Drop, paste, or click to upload a screenshot of the listing facts</span>
+          </div>
+          <input type="file" id="cf-shot-info-file" accept="image/*" style="display:none;">
+          <p id="cf-shot-info-status" class="shot-status"></p>
+        </div>
+        <div class="field">
+          <label>Listing photo <span class="field-hint">— becomes this home's photo</span></label>
+          <div id="cf-shot-photo-zone" class="shot-zone" tabindex="0" role="button" aria-label="Drag a photo here, click to upload, or paste with Ctrl+V">
+            <i class="ti ti-photo-plus" aria-hidden="true"></i>
+            <span>Drop, paste, or click to upload a photo of the house</span>
+          </div>
+          <input type="file" id="cf-shot-photo-file" accept="image/*" style="display:none;">
+          <input type="hidden" id="cf-photo-data" value="">
+          <p id="cf-shot-photo-status" class="shot-status"></p>
+          <div id="cf-shot-photo-preview" class="shot-preview" style="display:none;">
+            <img id="cf-shot-photo-preview-img" alt="">
+            <span>Saved as this home's photo.</span>
+            <button type="button" class="link-btn" id="cf-shot-photo-remove" style="padding:0;">Remove</button>
+          </div>
+        </div>
+      </div>
+      <div class="formgrid" style="margin-top:12px;">
+        <div class="field"><label for="cf-name">Address</label><input id="cf-name" placeholder="412 W Adams Ave"></div>
+        <div class="field"><label for="cf-neigh">Municipality / neighborhood</label><input id="cf-neigh" placeholder="Kirkwood"></div>
+        <div class="field"><label for="cf-price">Price ($)</label><input id="cf-price" type="number" placeholder="425000"></div>
+        <div class="field"><label for="cf-beds">Bedrooms</label>
+          <select id="cf-beds"><option>2</option><option selected>3</option><option>4</option><option>5+</option></select>
+        </div>
+        <div class="field"><label for="cf-baths">Bathrooms</label><input id="cf-baths" type="number" step="0.5" placeholder="2.5"></div>
+        <div class="field"><label for="cf-sqft">Sq ft</label><input id="cf-sqft" type="number" placeholder="1850"></div>
+        <div class="field"><label for="cf-lot">Lot (acres)</label><input id="cf-lot" type="number" step="0.01" placeholder="0.19"></div>
+        <div class="field"><label for="cf-year">Year built</label><input id="cf-year" type="number" placeholder="1948"></div>
+        <div class="field"><label for="cf-garage">Garage</label>
+          <select id="cf-garage"><option value="none">None</option><option value="1">1 car</option><option value="2" selected>2 car</option><option value="3">3+ car</option></select>
+        </div>
+        <div class="field"><label for="cf-basement">Basement</label>
+          <select id="cf-basement"><option value="none">None</option><option value="unfinished">Unfinished</option><option value="partial">Partly finished</option><option value="finished" selected>Finished</option></select>
+        </div>
+        <div class="field"><label for="cf-taxes">Property taxes ($/yr)</label><input id="cf-taxes" type="number" placeholder="5200"></div>
+        <div class="field"><label for="cf-hoa">HOA ($/mo)</label><input id="cf-hoa" type="number" placeholder="0"></div>
+        <div class="field"><label for="cf-drive">Drive to work (min)</label><input id="cf-drive" type="number" placeholder="22"></div>
+        <div class="field"><label for="cf-park">Nearest park (mi)</label><input id="cf-park" type="number" step="0.05" placeholder="0.4"></div>
+        <div class="field"><label for="cf-parkname">Park name</label><input id="cf-parkname" placeholder="Kirkwood Park"></div>
+        <div class="field"><label for="cf-walk">Walk score</label><input id="cf-walk" type="number" placeholder="62"></div>
+        <div class="field"><label for="cf-dom">Days on market</label><input id="cf-dom" type="number" placeholder="9"></div>
+        <div class="field"><label for="cf-source">Source</label><input id="cf-source" placeholder="Zillow, Redfin, MLS…"></div>
+        <div class="field"><label for="cf-url">Listing link</label><input id="cf-url" placeholder="https://…"></div>
+      </div>
+      <div class="check-row">
+        <label class="check"><input type="checkbox" id="cf-yard"> Fenced yard</label>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" id="full-save"><i class="ti ti-check" aria-hidden="true"></i> Save listing</button>
+        <button class="btn" id="full-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TABS ============ -->
+  <div class="view-tabs" id="view-tabs">
+    <button class="tab-btn active" data-view="all">All homes</button>
+    <button class="tab-btn" data-view="top">Top picks</button>
+  </div>
+
+  <div id="view-all">
+    <div class="toolbar">
+      <select id="sort">
+        <option value="added">Sort: recently added</option>
+        <option value="score">Sort: best match first</option>
+        <option value="price-asc">Sort: price, low to high</option>
+        <option value="price-desc">Sort: price, high to low</option>
+        <option value="ppsf">Sort: price per sq ft</option>
+        <option value="monthly">Sort: lowest monthly cost</option>
+        <option value="commute">Sort: shortest commute</option>
+        <option value="dom">Sort: newest on market</option>
+      </select>
+      <select id="filter-status">
+        <option value="all">All statuses</option>
+        <option value="needs-review">Needs review</option>
+        <option value="interested">Interested</option>
+        <option value="toured">Toured</option>
+        <option value="offer">Offer made</option>
+        <option value="contract">Under contract</option>
+        <option value="passed">Passed</option>
+        <option value="off-market">Off market</option>
+      </select>
+      <label class="check"><input type="checkbox" id="filter-liked"> Liked only</label>
+      <button type="button" class="btn btn-ghost" id="filters-toggle">Filters <i class="ti ti-chevron-down" id="filters-chevron" aria-hidden="true"></i></button>
+      <span id="count" class="mono count"></span>
+    </div>
+
+    <div id="filters-panel" class="card filters-panel" style="display:none;">
+      <div class="formgrid">
+        <div class="field"><label for="f-price-min">Min price</label><input id="f-price-min" type="number" placeholder="$"></div>
+        <div class="field"><label for="f-price-max">Max price</label><input id="f-price-max" type="number" placeholder="$"></div>
+        <div class="field"><label for="f-baths">Min bathrooms</label><input id="f-baths" type="number" step="0.5" placeholder="Any"></div>
+        <div class="field"><label for="f-sqft">Min sq ft</label><input id="f-sqft" type="number" placeholder="Any"></div>
+        <div class="field"><label for="f-drive">Max drive to work (min)</label><input id="f-drive" type="number" placeholder="Any"></div>
+        <div class="field"><label for="f-walk">Min walk score</label><input id="f-walk" type="number" placeholder="Any"></div>
+        <div class="field"><label for="f-neigh">Municipality</label><input id="f-neigh" placeholder="e.g. Webster Groves"></div>
+        <div class="field"><label for="f-basement">Basement</label>
+          <select id="f-basement"><option value="any">Any</option><option value="finished">Finished</option><option value="partial">Partly finished or better</option><option value="unfinished">Any basement</option></select>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="filter-group-label">Bedrooms</span>
+        <label class="check"><input type="checkbox" class="f-beds" value="2"> 2</label>
+        <label class="check"><input type="checkbox" class="f-beds" value="3"> 3</label>
+        <label class="check"><input type="checkbox" class="f-beds" value="4"> 4</label>
+        <label class="check"><input type="checkbox" class="f-beds" value="5+"> 5+</label>
+      </div>
+      <div class="check-row">
+        <label class="check"><input type="checkbox" id="f-garage"> Has garage</label>
+        <label class="check"><input type="checkbox" id="f-yard"> Fenced yard</label>
+        <label class="check"><input type="checkbox" id="f-nohoa"> No HOA</label>
+      </div>
+      <button type="button" class="link-btn" id="filters-reset" style="margin-top:6px;">Reset filters</button>
+    </div>
+
+    <div id="list"></div>
+
+    <div class="card" id="compare-card" style="display:none;">
+      <strong class="compare-title"><i class="ti ti-arrows-diff" aria-hidden="true"></i> Comparing</strong>
+      <div id="compare-body" class="compare-body"></div>
+    </div>
+  </div>
+
+  <div id="view-top" style="display:none;">
+    <div class="section-eyebrow"><i class="ti ti-sparkles" aria-hidden="true"></i> This week's top picks</div>
+    <p class="top10-intro">Ranked by price fit, commute, must-haves, walkability, park access and your ratings — highest first. Passed and off-market homes are excluded. Open any home to see exactly where its score came from.</p>
+    <div id="top-list"></div>
+  </div>
+
+  <div id="view-detail" style="display:none;"></div>
+
+  <footer class="footer">Everything here syncs between the two of you. Signed in with Google — nobody else can read or write it.</footer>
+</div>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>
