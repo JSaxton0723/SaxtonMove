@@ -30,18 +30,16 @@ backed by Firebase (Firestore + Google auth).
 tab → replace everything with the contents of `firestore.rules` → **Publish**.
 Until this is done, every read fails with `permission-denied`.
 
-**2 — GitHub Pages.**
-
-1. Create a repo on GitHub — **public** is fine and required for free Pages.
-2. Push this folder to it.
-3. Repo **Settings → Pages** → Source: **Deploy from a branch** →
-   Branch `main`, folder `/ (root)` → Save.
-4. Wait a minute. Your site is at `https://<user>.github.io/<repo>/`.
+**2 — Turn on GitHub Pages.** The repo is <https://github.com/JSaxton0723/SaxtonMove>
+and `main` is already pushed. Repo **Settings → Pages** → Source:
+**Deploy from a branch** → Branch `main`, folder `/ (root)` → Save. Give it a
+minute; the site lands at <https://jsaxton0723.github.io/SaxtonMove/>.
 
 **3 — Let Firebase trust the site.**
 
 Firebase → **Authentication → Settings → Authorized domains** →
-**Add domain** → `<user>.github.io`.
+**Add domain** → `jsaxton0723.github.io`. That is the bare host — no repo path,
+no `https://`.
 
 Skip this and sign-in fails with `auth/unauthorized-domain`. `localhost` is
 authorized automatically, so it works locally before you ever deploy — which
