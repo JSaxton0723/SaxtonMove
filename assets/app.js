@@ -221,6 +221,17 @@ function avgRating(l){
 }
 function isLiked(l){ return PEOPLE.some(p => (Number(l["rating" + p.key]) || 0) >= 4); }
 
+/* A home that arrived from the email importer has price, beds, baths, sqft,
+   a photo and a link — and none of the location or carrying-cost fields the
+   score is mostly built from. Ranking it against hand-entered homes would
+   punish it for missing data rather than for being a worse house, so it stays
+   out of Top picks until someone looks the three location numbers up.
+   Computed, not stored: it clears itself the moment the gaps are filled. */
+function needsDetails(l){
+  if (!l.autoImported) return false;
+  return !(l.drive > 0 && l.walk > 0 && l.park !== "" && l.park != null);
+}
+
 const GARAGE_LABEL   = { none:"No garage", "1":"1-car garage", "2":"2-car garage", "3":"3+ car garage" };
 const BASEMENT_LABEL = { none:"No basement", unfinished:"Unfinished basement",
                          partial:"Partly finished basement", finished:"Finished basement" };
@@ -361,8 +372,11 @@ function renderCard(l, rank){
           '<p class="neigh">' + esc(l.neigh || "—") + (l.source ? " · " + esc(l.source) : "") + "</p></div>" +
           '<div class="price-col"><div class="price">' + money(l.price) + "</div>" +
           '<div class="price-sub">' + (l.sqft ? money(ppsf(l)) + "/sqft · " : "") + money(m.total) + "/mo</div></div></div>" +
-        '<div class="match"><div class="match-bar"><div class="match-fill" style="width:' + score + '%"></div></div>' +
-          '<span class="match-num">' + score + " / 100</span></div>" +
+        (needsDetails(l)
+          ? '<a class="needs-details" href="#/home/' + l.id + '/edit"><i class="ti ti-alert-circle"></i> ' +
+            'Needs details — not ranked yet <span>Add them <i class="ti ti-arrow-right"></i></span></a>'
+          : '<div class="match"><div class="match-bar"><div class="match-fill" style="width:' + score + '%"></div></div>' +
+            '<span class="match-num">' + score + " / 100</span></div>") +
         '<div class="tags">' + tagsRow(l) + "</div>" +
         ratingsBlock(l) +
         (l.notes ? '<p class="notes">' + esc(l.notes) + "</p>" : "") +
@@ -407,6 +421,7 @@ function getFiltered(){
     if (chk("f-garage") && (!l.garage || l.garage === "none")) return false;
     if (chk("f-yard")   && !l.yard) return false;
     if (chk("f-nohoa")  && l.hoa) return false;
+    if (chk("filter-incomplete") && !needsDetails(l)) return false;
     return true;
   });
 
@@ -438,8 +453,18 @@ function render(){
   document.getElementById("hero-count").textContent =
     listings.length + (listings.length === 1 ? " home tracked" : " homes tracked");
 
-  const eligible = listings.filter(l => l.status !== "passed" && l.status !== "off-market");
+  const eligible = listings.filter(l =>
+    l.status !== "passed" && l.status !== "off-market" && !needsDetails(l));
   const ranked = eligible.slice().sort((a,b) => totalScore(b) - totalScore(a)).slice(0, 10);
+  const held = listings.filter(l =>
+    l.status !== "passed" && l.status !== "off-market" && needsDetails(l)).length;
+  document.getElementById("top-held").innerHTML = held
+    ? '<i class="ti ti-alert-circle"></i> ' +
+      (held === 1
+        ? "1 home is held out of this ranking until its commute, walk score and park distance are filled in. "
+        : held + " homes are held out of this ranking until their commute, walk score and park distance are filled in. ") +
+      '<a href="#" data-act="show-incomplete">Show ' + (held === 1 ? "it" : "them") + "</a>."
+    : "";
   document.getElementById("top-list").innerHTML = ranked.length
     ? ranked.map((l,i) => renderCard(l, i+1)).join("")
     : '<div class="empty"><i class="ti ti-list-search"></i>No active homes to rank yet.</div>';
@@ -510,7 +535,76 @@ function renderCompare(){
 /* =====================================================================
    DETAIL
    ===================================================================== */
-function detailHtml(l){
+/* ---- edit form ----
+   Every field the score or the cost box reads, in the order you'd fill them
+   in from a listing page. The three the importer can never supply come first
+   and are marked, because for an imported home they are the whole job. */
+const EDIT_FIELDS = [
+  ["drive",    "Drive to work (min)",  "number", { step:"1",    gap:true }],
+  ["walk",     "Walk score (0-100)",   "number", { step:"1",    gap:true }],
+  ["park",     "Nearest park (mi)",    "number", { step:"0.05", gap:true }],
+  ["parkName", "Park name",            "text",   {}],
+  ["name",     "Address",              "text",   {}],
+  ["neigh",    "Municipality",         "text",   {}],
+  ["price",    "Price ($)",            "number", { step:"1000" }],
+  ["beds",     "Bedrooms",             "select", { opts:["2","3","4","5+"] }],
+  ["baths",    "Bathrooms",            "number", { step:"0.5" }],
+  ["sqft",     "Sq ft",                "number", { step:"10" }],
+  ["lot",      "Lot (acres)",          "number", { step:"0.01" }],
+  ["year",     "Year built",           "number", { step:"1" }],
+  ["garage",   "Garage",               "select", { opts:["none","1","2","3"], labels:GARAGE_LABEL }],
+  ["basement", "Basement",             "select", { opts:["none","unfinished","partial","finished"], labels:BASEMENT_LABEL }],
+  ["taxes",    "Property taxes ($/yr)","number", { step:"100" }],
+  ["hoa",      "HOA ($/mo)",           "number", { step:"5" }],
+  ["dom",      "Days on market",       "number", { step:"1" }],
+  ["source",   "Source",               "text",   {}],
+  ["url",      "Listing link",         "text",   {}]
+];
+
+function editFormHtml(l){
+  const fields = EDIT_FIELDS.map(([key, label, type, o]) => {
+    const v = l[key] == null ? "" : l[key];
+    const input = type === "select"
+      ? '<select id="ed-' + key + '">' + o.opts.map(opt =>
+          '<option value="' + opt + '"' + (String(v) === opt ? " selected" : "") + '>' +
+          esc(o.labels ? o.labels[opt] : opt) + "</option>").join("") + "</select>"
+      : '<input id="ed-' + key + '" type="' + type + '"' + (o.step ? ' step="' + o.step + '"' : "") +
+        ' value="' + esc(v) + '">';
+    return '<div class="field' + (o.gap ? " field-gap" : "") + '"><label for="ed-' + key + '">' +
+      label + (o.gap ? ' <i class="ti ti-alert-circle" title="Not supplied by listing emails"></i>' : "") +
+      "</label>" + input + "</div>";
+  }).join("");
+
+  return '<div class="edit-form" id="edit-form">' +
+    '<p class="edit-title"><i class="ti ti-pencil"></i> Edit details' +
+      (needsDetails(l) ? '<span class="edit-hint">The three flagged fields are what this home needs to be ranked.</span>' : "") + "</p>" +
+    '<div class="formgrid">' + fields + "</div>" +
+    '<div class="check-row"><label class="check"><input type="checkbox" id="ed-yard"' +
+      (l.yard ? " checked" : "") + "> Fenced yard</label></div>" +
+    '<div class="form-actions">' +
+      '<button class="btn btn-primary" data-act="edit-save" data-id="' + l.id + '"><i class="ti ti-check"></i> Save</button>' +
+      '<button class="btn" data-act="edit-cancel" data-id="' + l.id + '">Cancel</button>' +
+      '<span class="save-hint" id="edit-saved"></span>' +
+    "</div></div>";
+}
+
+function readEditForm(){
+  const out = {};
+  EDIT_FIELDS.forEach(([key, , type]) => {
+    const el = document.getElementById("ed-" + key);
+    if (!el) return;
+    const raw = el.value.trim();
+    // park is the one number where 0 is meaningful and "" means unknown,
+    // so it is stored as "" rather than coerced to 0 like the rest.
+    if (key === "park") out.park = raw === "" ? "" : Number(raw);
+    else if (type === "number") out[key] = raw === "" ? 0 : Number(raw);
+    else out[key] = raw;
+  });
+  out.yard = document.getElementById("ed-yard").checked;
+  return out;
+}
+
+function detailHtml(l, editing){
   const p = scoreParts(l), m = monthlyCost(l), score = totalScore(l);
   const bd = Object.keys(WEIGHTS).map(k =>
     '<div class="bd-row"><span class="bd-label">' + BD_LABEL[k] + "</span>" +
@@ -531,9 +625,16 @@ function detailHtml(l){
       '<div class="price-col"><div class="price">' + money(l.price) + "</div>" +
       (l.sqft ? '<div class="price-sub">' + money(ppsf(l)) + "/sqft</div>" : "") + "</div></div>" +
 
-    '<div class="match" style="margin-top:16px;"><div class="match-bar">' +
-      '<div class="match-fill" style="width:' + score + '%"></div></div>' +
-      '<span class="match-num">' + score + " / 100</span></div>" +
+    (needsDetails(l)
+      ? '<div class="needs-details block"><i class="ti ti-alert-circle"></i> ' +
+        'Held out of Top picks until drive time, walk score and park distance are filled in.</div>'
+      : '<div class="match" style="margin-top:16px;"><div class="match-bar">' +
+        '<div class="match-fill" style="width:' + score + '%"></div></div>' +
+        '<span class="match-num">' + score + " / 100</span></div>") +
+
+    (editing ? editFormHtml(l)
+             : '<button class="btn edit-btn" data-act="edit-open" data-id="' + l.id + '">' +
+               '<i class="ti ti-pencil"></i> Edit details</button>') +
 
     '<dl class="spec-grid">' +
       spec("Bedrooms", esc(l.beds || "—")) +
@@ -580,10 +681,11 @@ function detailHtml(l){
    ROUTING  — #/home/<id> so a link to one house is shareable
    ===================================================================== */
 function currentRoute(){
-  const m = location.hash.match(/^#\/home\/(.+)$/);
-  return m ? { view:"detail", id:m[1] } : { view:"list" };
+  const m = location.hash.match(/^#\/home\/([^/]+)(\/edit)?$/);
+  return m ? { view:"detail", id:m[1], edit:!!m[2] } : { view:"list" };
 }
 let currentTab = "all";
+let editDirty = false;   // guards an open edit form against live snapshots
 
 function renderApp(){
   const r = currentRoute();
@@ -596,8 +698,12 @@ function renderApp(){
       if (listings.length) { location.hash = ""; return; }
       detailEl.innerHTML = '<button class="back-link" data-act="back"><i class="ti ti-arrow-left"></i> Back</button>' +
         '<div class="empty"><i class="ti ti-home-off"></i>That home is no longer on the list.</div>';
+    } else if (r.edit && document.getElementById("edit-form") && editDirty){
+      /* A live snapshot landed while the form is open and typed into. Rewriting
+         the DOM here would throw away what is in the boxes, so leave it alone —
+         saving re-renders anyway. */
     } else {
-      detailEl.innerHTML = detailHtml(l);
+      detailEl.innerHTML = detailHtml(l, r.edit);
     }
     detailEl.style.display = "block";
     document.getElementById("view-all").style.display = "none";
@@ -628,7 +734,7 @@ async function addListing(data){
     name:"Untitled", neigh:"", price:0, beds:"3", baths:0, sqft:0, lot:0, year:0,
     garage:"none", basement:"none", yard:false, hoa:0, taxes:0,
     drive:0, park:"", parkName:"", walk:0, dom:0,
-    status:"needs-review", source:"", url:"", photo:"", notes:"",
+    status:"needs-review", source:"", url:"", photo:"", notes:"", autoImported:false,
     added: serverTimestamp(), addedMs: Date.now(), addedBy: me ? me.email : ""
   };
   PEOPLE.forEach(p => { base["rating" + p.key] = 0; base["note" + p.key] = ""; });
@@ -666,7 +772,26 @@ document.body.addEventListener("click", e => {
   const el = e.target.closest("[data-act]"); if (!el) return;
   const act = el.dataset.act, id = el.dataset.id;
 
-  if (act === "back"){ location.hash = ""; }
+  if (act === "back"){ editDirty = false; location.hash = ""; }
+  else if (act === "edit-open"){ e.preventDefault(); editDirty = false; location.hash = "#/home/" + id + "/edit"; }
+  else if (act === "edit-cancel"){ e.preventDefault(); editDirty = false; location.hash = "#/home/" + id; }
+  else if (act === "edit-save"){
+    e.preventDefault();
+    const data = readEditForm();
+    editDirty = false;
+    patch(id, data).then(() => { location.hash = "#/home/" + id; });
+  }
+  else if (act === "show-incomplete"){
+    e.preventDefault();
+    currentTab = "all";
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "all"));
+    const box = document.getElementById("filter-incomplete");
+    box.checked = true;
+    document.getElementById("filters-panel").style.display = "block";
+    document.getElementById("filters-chevron").className = "ti ti-chevron-up";
+    renderApp();
+    document.getElementById("list").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
   else if (act === "remove"){
     const l = listings.find(x => x.id === id);
     if (!l) return;
@@ -690,6 +815,7 @@ document.body.addEventListener("change", e => {
 /* Notes autosave — debounced so a sentence is one write, not thirty */
 const noteTimers = {};
 document.body.addEventListener("input", e => {
+  if (e.target.closest("#edit-form")) editDirty = true;
   const note = e.target.closest("[data-act='note']");
   if (note){
     const { id, person } = note.dataset;

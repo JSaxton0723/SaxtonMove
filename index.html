@@ -221,6 +221,7 @@
         <option value="off-market">Off market</option>
       </select>
       <label class="check"><input type="checkbox" id="filter-liked"> Liked only</label>
+      <label class="check"><input type="checkbox" id="filter-incomplete"> Needs details</label>
       <button type="button" class="btn btn-ghost" id="filters-toggle">Filters <i class="ti ti-chevron-down" id="filters-chevron" aria-hidden="true"></i></button>
       <span id="count" class="mono count"></span>
     </div>
@@ -264,6 +265,7 @@
   <div id="view-top" style="display:none;">
     <div class="section-eyebrow"><i class="ti ti-sparkles" aria-hidden="true"></i> This week's top picks</div>
     <p class="top10-intro">Ranked by price fit, commute, must-haves, walkability, park access and your ratings — highest first. Passed and off-market homes are excluded. Open any home to see exactly where its score came from.</p>
+    <div id="top-held" class="top-held"></div>
     <div id="top-list"></div>
   </div>
 
