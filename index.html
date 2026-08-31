@@ -21,7 +21,12 @@
 <div id="gate" class="gate">
   <div class="gate-card">
     <svg class="gate-arch" viewBox="0 0 120 70" aria-hidden="true">
-      <path d="M14 68 C 16 8, 104 8, 106 68" fill="none" stroke="var(--accent-soft)" stroke-width="6" stroke-linecap="round" opacity="0.75"/>
+      <!-- Two cubics, not one: a single curve springs at an angle and reads as a
+           rainbow. This keeps the legs near-vertical at the base like a catenary.
+           Baseline sits at 67 so the 6px stroke does not clip on the viewBox. -->
+      <path d="M17 67 C 20 24, 34 8, 60 8 C 86 8, 100 24, 103 67"
+            fill="none" stroke="var(--accent-soft)" stroke-width="6"
+            stroke-linecap="round" opacity="0.8"/>
     </svg>
     <h1 class="gate-title">Saxton House Hunt</h1>
     <p class="gate-sub">St. Louis · your shared shortlist</p>
