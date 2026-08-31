@@ -110,7 +110,7 @@ a{color:var(--accent);}
   border-radius:var(--r-pill);padding:6px 13px;font-size:12.5px;color:var(--ink-soft);font-weight:500;}
 .chip i{color:var(--accent);}
 .signout-btn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);}
-.skyline{width:100%;height:34px;display:block;margin-top:16px;}
+.skyline{width:100%;height:40px;display:block;margin-top:16px;}
 
 /* theme toggle */
 .theme-tog{display:inline-flex;gap:2px;background:var(--sunk);border:1px solid var(--line);
