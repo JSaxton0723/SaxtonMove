@@ -10,42 +10,27 @@ backed by Firebase (Firestore + Google auth).
 
 ## Setup
 
-Two parts, about fifteen minutes. Do them in order — Firebase first, then
-hosting, because the hosting step needs a URL that Firebase has to trust.
+### Done already
 
-### Part 1 — Firebase
+- Firebase project `stl-house-hunt` created, Firestore enabled, Google
+  sign-in switched on.
+- Config wired into the top of [`assets/app.js`](assets/app.js). These
+  values are **not secret** — they ship in the JavaScript of every Firebase
+  web app and are safe in a public repo. Access is controlled by the rules,
+  not by hiding them.
+- Both Google accounts listed in `ALLOWED` in `assets/app.js` **and** in
+  `allowed()` in [`firestore.rules`](firestore.rules). The rules are the
+  real gate; the copy in `app.js` only makes a wrong account say "you're not
+  on the allowlist" instead of throwing permission errors.
+  **Change one, change the other.**
 
-1. **Create the project.** <https://console.firebase.google.com> → **Add project**.
-   Name it something like `stl-house-hunt`. Skip Google Analytics. Create.
+### Still to do
 
-2. **Firestore.** Left sidebar → **Build → Firestore Database** →
-   **Create database**. Pick a nearby region (`us-central1` is fine).
-   Start in **production mode** — the rules in this repo replace the
-   defaults in step 5, and starting locked is safer than starting open.
+**1 — Publish the rules.** Firebase console → Firestore Database → **Rules**
+tab → replace everything with the contents of `firestore.rules` → **Publish**.
+Until this is done, every read fails with `permission-denied`.
 
-3. **Google sign-in.** **Build → Authentication** → **Get started** →
-   **Sign-in method** → enable **Google** → pick a support email → Save.
-
-4. **Register the web app.** Gear icon → **Project settings** → scroll to
-   *Your apps* → click **`</>`** → nickname it → **Register app**.
-   Firebase shows a `firebaseConfig` block. Copy the six values into the
-   top of [`assets/app.js`](assets/app.js), replacing the `PASTE_…` strings.
-
-   These values are **not secret** — they ship in the JavaScript of every
-   Firebase web app and are safe in a public repo. Access is controlled by
-   the rules in step 5, not by hiding them.
-
-5. **Rules.** Firestore → **Rules** tab. Replace everything with the
-   contents of [`firestore.rules`](firestore.rules), edit the two email
-   addresses in the `allowed()` function to your two Google accounts
-   (lowercase), then **Publish**.
-
-6. **The same two addresses** go in the `ALLOWED` array at the top of
-   `assets/app.js`. The rules are the real gate; the copy in `app.js`
-   exists so a wrong account gets "you're not on the allowlist" instead of
-   a wall of permission errors. **Change one, change the other.**
-
-### Part 2 — GitHub Pages
+**2 — GitHub Pages.**
 
 1. Create a repo on GitHub — **public** is fine and required for free Pages.
 2. Push this folder to it.
@@ -53,13 +38,15 @@ hosting, because the hosting step needs a URL that Firebase has to trust.
    Branch `main`, folder `/ (root)` → Save.
 4. Wait a minute. Your site is at `https://<user>.github.io/<repo>/`.
 
-### Part 3 — let Firebase trust the site
+**3 — Let Firebase trust the site.**
 
-Back in Firebase → **Authentication → Settings → Authorized domains** →
+Firebase → **Authentication → Settings → Authorized domains** →
 **Add domain** → `<user>.github.io`.
 
-Skip this and sign-in fails with `auth/unauthorized-domain`. The app names
-that fix on screen if it happens.
+Skip this and sign-in fails with `auth/unauthorized-domain`. `localhost` is
+authorized automatically, so it works locally before you ever deploy — which
+is exactly why this step is easy to forget. The app names the fix on screen
+if it happens.
 
 ---
 

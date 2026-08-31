@@ -22,11 +22,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ---- EDIT THESE TWO LINES, lowercase, then Publish ----
+    // Must stay identical to ALLOWED in assets/app.js. Lowercase.
     function allowed() {
       return [
-        'paste_your_email',
-        'paste_her_email'
+        'jakesaxton0723@gmail.com',
+        'jackisaxton723@gmail.com'
       ];
     }
 

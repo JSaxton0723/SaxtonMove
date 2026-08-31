@@ -14,21 +14,25 @@ import {
   onSnapshot, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* ---- 1 of 2: paste the six values from the Firebase console here ---- */
+/* Firebase project: stl-house-hunt.
+   These values are public identifiers, not secrets — they ship in the JS of
+   every Firebase web app and are safe in a public repo. Access is decided by
+   firestore.rules and by Authentication → Settings → Authorized domains.
+   measurementId is omitted: no Analytics here, so nothing to measure. */
 const firebaseConfig = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "PASTE_PROJECT.firebaseapp.com",
-  projectId: "PASTE_PROJECT",
-  storageBucket: "PASTE_PROJECT.firebasestorage.app",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyCvxSbrDbHfiqoxyep4WR_R8Rr96LQjOTM",
+  authDomain: "stl-house-hunt.firebaseapp.com",
+  projectId: "stl-house-hunt",
+  storageBucket: "stl-house-hunt.firebasestorage.app",
+  messagingSenderId: "665711404770",
+  appId: "1:665711404770:web:22d8dc3c3b0f996cc020bb"
 };
 
-/* ---- 2 of 2: the two Google accounts allowed in ----
-   This list is only for a friendly "you're not on the list" message. The
-   REAL gate is the identical list in firestore.rules — a client-side check
-   stops nothing on its own. Change one, change the other. */
-const ALLOWED = ["PASTE_YOUR_EMAIL", "PASTE_HER_EMAIL"];
+/* The two Google accounts allowed in. This copy only produces a friendly
+   "you're not on the list" message — the REAL gate is the identical list in
+   firestore.rules, because a check that runs in the browser stops nobody.
+   Change one, change the other. Lowercase. */
+const ALLOWED = ["jakesaxton0723@gmail.com", "jackisaxton723@gmail.com"];
 
 /* ---- who's rating. Keys are stored in Firestore, so renaming a person
    here does not lose their existing ratings — only the label changes. ---- */
