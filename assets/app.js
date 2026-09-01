@@ -327,14 +327,21 @@ function tagsRow(l){
   const t = [];
   if (l.beds || l.baths) t.push('<span class="tag mono">' + esc(l.beds || "?") + " bd · " + esc(l.baths || "?") + " ba</span>");
   if (l.sqft) t.push('<span class="tag mono">' + Number(l.sqft).toLocaleString() + " sqft</span>");
-  t.push(l.garage && l.garage !== "none"
-    ? '<span class="tag good"><i class="ti ti-check"></i> ' + GARAGE_LABEL[l.garage] + "</span>"
-    : '<span class="tag gap">No garage</span>');
-  const br = BASEMENT_RANK[l.basement || "none"];
-  t.push(br >= 2
-    ? '<span class="tag good"><i class="ti ti-check"></i> ' + BASEMENT_LABEL[l.basement] + "</span>"
-    : '<span class="tag' + (br === 0 ? " gap" : "") + '">' + BASEMENT_LABEL[l.basement || "none"] + "</span>");
-  if (l.yard) t.push('<span class="tag good"><i class="ti ti-check"></i> Fenced yard</span>');
+  /* Garage, basement and yard default to none/false. On an imported home
+     that means "nobody has looked yet", NOT "this house lacks one" — and a
+     red "No garage" would be asserting something the email never said, which
+     could talk you out of a house that has one. Stay quiet until enriched;
+     the needs-details badge already explains why the card is thin. */
+  if (!needsDetails(l)){
+    t.push(l.garage && l.garage !== "none"
+      ? '<span class="tag good"><i class="ti ti-check"></i> ' + GARAGE_LABEL[l.garage] + "</span>"
+      : '<span class="tag gap">No garage</span>');
+    const br = BASEMENT_RANK[l.basement || "none"];
+    t.push(br >= 2
+      ? '<span class="tag good"><i class="ti ti-check"></i> ' + BASEMENT_LABEL[l.basement] + "</span>"
+      : '<span class="tag' + (br === 0 ? " gap" : "") + '">' + BASEMENT_LABEL[l.basement || "none"] + "</span>");
+    if (l.yard) t.push('<span class="tag good"><i class="ti ti-check"></i> Fenced yard</span>');
+  }
   if (l.drive) t.push('<span class="tag"><i class="ti ti-car"></i> ' + l.drive + " min to work</span>");
   if (l.park !== "" && l.park != null) t.push('<span class="tag"><i class="ti ti-trees"></i> ' + l.park + " mi" + (l.parkName ? " · " + esc(l.parkName) : "") + "</span>");
   if (l.walk) t.push('<span class="tag"><i class="ti ti-walk"></i> Walk ' + l.walk + "</span>");
