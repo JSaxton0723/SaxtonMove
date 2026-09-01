@@ -16,11 +16,19 @@
    definition inside a media query.
    ===================================================================== */
 :root{
-  --body:'Inter',sans-serif;
-  --display:'Instrument Serif',Georgia,serif;
-  --mono:'IBM Plex Mono',monospace;
+  --body:'Instrument Sans',ui-sans-serif,system-ui,sans-serif;
+  --display:'Bricolage Grotesque','Instrument Sans',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
 
-  --r-lg:10px; --r-md:7px; --r-sm:5px; --r-pill:999px;
+  /* Display is a heavy grotesque now, not a 400-weight serif, so the weight
+     and its tighter tracking live in tokens rather than being repeated as
+     literals at each of the four places that set the display face. */
+  --display-w:800; --name-w:700; --display-ls:-0.028em;
+
+  /* mise's corners: near-square. --r-pill is deliberately NOT 999px here —
+     tabs, tags and status pills read as clipped rectangles in that design,
+     and leaving it round is what makes a squared theme look half-converted. */
+  --r-lg:5px; --r-md:3px; --r-sm:2px; --r-pill:3px;
 
   /* ---------- DAY — porcelain ground, pine primary, brass highlight ---- */
   --bg:#F3F5F0;
@@ -104,7 +112,7 @@ a{color:var(--accent);}
 .gate-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
   padding:44px 38px 38px;text-align:center;max-width:400px;width:100%;}
 .gate-arch{width:104px;height:60px;display:block;margin:0 auto 14px;}
-.gate-title{font-family:var(--display);font-weight:400;font-size:33px;margin:0;color:var(--head-ink);letter-spacing:-0.005em;}
+.gate-title{font-family:var(--display);font-weight:var(--display-w);font-size:29px;margin:0;color:var(--head-ink);letter-spacing:var(--display-ls);line-height:1.1;}
 .gate-sub{margin:6px 0 26px;font-size:13px;color:var(--muted);}
 .gate-btn{width:100%;justify-content:center;}
 .gate-msg{font-size:12.5px;color:var(--muted);margin:16px 0 0;line-height:1.6;min-height:19px;}
@@ -113,7 +121,7 @@ a{color:var(--accent);}
 /* ============ hero ============ */
 .hero{padding:4px 0 0;margin-bottom:4px;}
 .top{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;}
-.logo{font-family:var(--display);font-weight:400;font-size:33px;letter-spacing:-0.005em;margin:0;color:var(--head-ink);line-height:1.1;}
+.logo{font-family:var(--display);font-weight:var(--display-w);font-size:30px;letter-spacing:var(--display-ls);margin:0;color:var(--head-ink);line-height:1.1;}
 .tagline{margin:5px 0 0;font-size:13px;color:var(--muted);}
 .top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);
@@ -235,10 +243,10 @@ select{appearance:none;-webkit-appearance:none;padding-right:30px;
 .content-col{flex:1;min-width:0;}
 
 .row1{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
-.name{font-weight:600;font-size:15.5px;margin:0;letter-spacing:-0.01em;color:var(--head-ink);}
+.name{font-weight:var(--name-w);font-size:15.5px;margin:0;letter-spacing:-0.01em;color:var(--head-ink);}
 .neigh{font-size:12px;color:var(--muted);margin:3px 0 0;}
 .price-col{text-align:right;white-space:nowrap;}
-.price{font-family:var(--display);font-weight:400;font-size:22px;color:var(--price);line-height:1;}
+.price{font-family:var(--display);font-weight:var(--display-w);font-size:19px;color:var(--price);line-height:1.05;letter-spacing:-0.02em;}
 .price-sub{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:5px;}
 .name-link{color:inherit;text-decoration:none;}
 .name-link:hover{color:var(--accent);text-decoration:underline;}
@@ -298,7 +306,7 @@ select{appearance:none;-webkit-appearance:none;padding-right:30px;
   display:block;background:var(--photo);}
 .detail-photo-empty{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:36px;}
 .detail-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
-.detail-name{font-family:var(--display);font-weight:400;font-size:26px;margin:0;color:var(--head-ink);line-height:1.15;}
+.detail-name{font-family:var(--display);font-weight:var(--display-w);font-size:24px;margin:0;color:var(--head-ink);line-height:1.15;letter-spacing:var(--display-ls);}
 
 .spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;background:var(--line);
   border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;margin:18px 0;}
