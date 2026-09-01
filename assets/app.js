@@ -28,11 +28,23 @@ const firebaseConfig = {
   appId: "1:665711404770:web:22d8dc3c3b0f996cc020bb"
 };
 
-/* The two Google accounts allowed in. This copy only produces a friendly
+/* The Google accounts allowed in. This copy only produces a friendly
    "you're not on the list" message — the REAL gate is the identical list in
    firestore.rules, because a check that runs in the browser stops nobody.
-   Change one, change the other. Lowercase. */
-const ALLOWED = ["jakesaxton0723@gmail.com", "jackisaxton723@gmail.com"];
+   Change one, change the other. Lowercase.
+
+   The 0723 / 723 mismatch between the two personal addresses is correct and
+   deliberate, not a typo — leave it alone.
+
+   saxtonmove@ is the shared account that receives the Zillow and Redfin
+   alerts. It is listed so it can sign in and look around; the importer
+   itself does NOT use it, writing to Firestore through a service account
+   that bypasses these rules entirely. */
+const ALLOWED = [
+  "jakesaxton0723@gmail.com",
+  "jackisaxton723@gmail.com",
+  "saxtonmove@gmail.com"
+];
 
 /* ---- who's rating. Keys are stored in Firestore, so renaming a person
    here does not lose their existing ratings — only the label changes. ---- */

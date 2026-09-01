@@ -22,11 +22,20 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Must stay identical to ALLOWED in assets/app.js. Lowercase.
+    /* Must stay identical to ALLOWED in assets/app.js. Lowercase.
+
+       The 0723 / 723 mismatch between the two personal addresses is correct
+       and deliberate, not a typo — leave it alone.
+
+       saxtonmove@ is the shared account that receives the Zillow and Redfin
+       alerts, listed so it can sign in and look around. The importer does
+       not authenticate as it: that runs on a service account, which bypasses
+       these rules entirely and so never appears in this list. */
     function allowed() {
       return [
         'jakesaxton0723@gmail.com',
-        'jackisaxton723@gmail.com'
+        'jackisaxton723@gmail.com',
+        'saxtonmove@gmail.com'
       ];
     }
 
