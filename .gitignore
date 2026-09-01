@@ -3,3 +3,10 @@ node_modules/
 Thumbs.db
 *.log
 .env
+
+# Real listing alerts carry the recipient's address and account-linked
+# tracking tokens. Keep samples out of a public repo — pass their path to
+# importer/test.js instead.
+*.eml
+*.msg
+importer/samples/
