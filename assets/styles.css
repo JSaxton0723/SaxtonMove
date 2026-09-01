@@ -1,6 +1,15 @@
 /* =====================================================================
-   Saxton House Hunt — Warm study
+   Saxton House Hunt — Pine & brass
    ---------------------------------------------------------------------
+   Palette borrowed from mise: pine #1E4B39, brass #D9A441, porcelain
+   #F3F5F0. Day uses pine as the primary — buttons, links, active tabs —
+   with brass as the highlight on the match bar, stars and rank badges.
+
+   Night is derived, because mise has no dark mode. Pine is far too dark
+   to carry contrast against a dark ground, so brass becomes the primary
+   there and a lifted sage takes over "good"; the green stays present in
+   the surfaces, which are all green-black rather than neutral.
+
    Light is the base on :root. Dark overrides only the tokens that change,
    once for the system setting and once for an explicit choice, so the
    manual toggle can win in both directions. Never give a colour its only
@@ -13,66 +22,67 @@
 
   --r-lg:10px; --r-md:7px; --r-sm:5px; --r-pill:999px;
 
-  /* ---------- DAY ---------- */
-  --bg:#F7F2E8;
-  --surface:#FFFDF8;
-  --sunk:#F1EADC;
-  --ink:#241F19;
-  --head-ink:#181410;
-  --ink-soft:#4E463C;
-  --muted:#7D7264;
-  --line:#E4DBC9;
-  --line-soft:#EFE8DA;
+  /* ---------- DAY — porcelain ground, pine primary, brass highlight ---- */
+  --bg:#F3F5F0;
+  --surface:#FFFFFF;
+  --sunk:#EAEEE6;
+  --ink:#16211B;
+  --head-ink:#0E1813;
+  --ink-soft:#3E4A42;
+  --muted:#5F6B62;        /* mise ships #67736A; nudged darker — that lands
+                             at exactly 4.51 on this ground, no margin at all */
+  --line:#DBDFD6;
+  --line-soft:#E9ECE5;
 
-  --accent:#9A5A18;
-  --accent-soft:#D99A4E;
-  --accent-wash:#F7EAD6;
-  --on-accent:#FFFDF8;
+  --accent:#1E4B39;        /* pine — buttons, links, active tabs */
+  --accent-soft:#D9A441;   /* brass — match bar, stars, rank badge */
+  --accent-wash:#E7EDE8;
+  --on-accent:#FFFFFF;
 
-  --price:#181410;
-  --star:#A9781E;
+  --price:#16211B;
+  --star:#B8892B;
 
-  --good:#3D6140; --good-bg:#E6EDE2; --good-bd:#D3DFCD;
-  --bad:#9C4526;  --bad-bg:#F7E6DE;  --bad-bd:#EBD3C7;
-  --warn:#8A6412; --warn-bg:#F7EED6; --warn-bd:#E9DCBB;
+  --good:#1E4B39; --good-bg:#E7EDE8; --good-bd:#CFDCD3;
+  --bad:#A6432B;  --bad-bg:#F7E7E2;  --bad-bd:#EDD3CA;
+  --warn:#8C6414; --warn-bg:#FAF1D9; --warn-bd:#EDDFB6;
 
-  --tag:#F1EADC; --tag-ink:#57503F; --tag-bd:transparent;
-  --track:#EAE2D2; --fill:var(--accent-soft);
-  --photo:#EBE3D3;
-  --input:#FBF7EF;
+  --tag:#EAEEE6; --tag-ink:#48544B; --tag-bd:transparent;
+  --track:#E1E6DC; --fill:var(--accent-soft);
+  --photo:#E7EDE8;
+  --input:#F8FAF6;
 
   --shadow:none;
-  --shadow-pop:0 8px 28px rgba(36,31,25,0.13);
+  --shadow-pop:0 8px 28px rgba(22,33,27,0.13);
 }
 
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#15120F; --surface:#1E1A16; --sunk:#191512;
-    --ink:#EDE6DC; --head-ink:#F6F0E6; --ink-soft:#C4B9AA; --muted:#93887A;
-    --line:#2E2822; --line-soft:#272119;
-    --accent:#D99A4E; --accent-soft:#D99A4E; --accent-wash:#2A2118; --on-accent:#17120C;
-    --price:#F0DCC0; --star:#D99A4E;
-    --good:#93B588; --good-bg:#212A1E; --good-bd:transparent;
-    --bad:#D68A6E;  --bad-bg:#2E1F19;  --bad-bd:transparent;
-    --warn:#D9BC72; --warn-bg:#2B2519; --warn-bd:transparent;
-    --tag:#272119; --tag-ink:#BFB2A0; --tag-bd:transparent;
-    --track:#272119; --fill:#D99A4E;
-    --photo:#332C24; --input:#191512;
+    --bg:#0F1613; --surface:#17211C; --sunk:#131B17;
+    --ink:#E4EBE5; --head-ink:#F2F7F3; --ink-soft:#B7C2B9; --muted:#8B9990;
+    --line:#26332B; --line-soft:#202B24;
+    --accent:#D9A441; --accent-soft:#D9A441; --accent-wash:#241E12; --on-accent:#12190F;
+    --price:#EFE0BE; --star:#D9A441;
+    --good:#7FB394; --good-bg:#16281F; --good-bd:transparent;
+    --bad:#D98A72;  --bad-bg:#2C1D19;  --bad-bd:transparent;
+    --warn:#D9BC72; --warn-bg:#2A2417; --warn-bd:transparent;
+    --tag:#1E2922; --tag-ink:#AFBCB2; --tag-bd:transparent;
+    --track:#1E2922; --fill:#D9A441;
+    --photo:#24312A; --input:#131B17;
     --shadow-pop:0 8px 28px rgba(0,0,0,0.5);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#15120F; --surface:#1E1A16; --sunk:#191512;
-  --ink:#EDE6DC; --head-ink:#F6F0E6; --ink-soft:#C4B9AA; --muted:#93887A;
-  --line:#2E2822; --line-soft:#272119;
-  --accent:#D99A4E; --accent-soft:#D99A4E; --accent-wash:#2A2118; --on-accent:#17120C;
-  --price:#F0DCC0; --star:#D99A4E;
-  --good:#93B588; --good-bg:#212A1E; --good-bd:transparent;
-  --bad:#D68A6E;  --bad-bg:#2E1F19;  --bad-bd:transparent;
-  --warn:#D9BC72; --warn-bg:#2B2519; --warn-bd:transparent;
-  --tag:#272119; --tag-ink:#BFB2A0; --tag-bd:transparent;
-  --track:#272119; --fill:#D99A4E;
-  --photo:#332C24; --input:#191512;
+  --bg:#0F1613; --surface:#17211C; --sunk:#131B17;
+  --ink:#E4EBE5; --head-ink:#F2F7F3; --ink-soft:#B7C2B9; --muted:#8B9990;
+  --line:#26332B; --line-soft:#202B24;
+  --accent:#D9A441; --accent-soft:#D9A441; --accent-wash:#241E12; --on-accent:#12190F;
+  --price:#EFE0BE; --star:#D9A441;
+  --good:#7FB394; --good-bg:#16281F; --good-bd:transparent;
+  --bad:#D98A72;  --bad-bg:#2C1D19;  --bad-bd:transparent;
+  --warn:#D9BC72; --warn-bg:#2A2417; --warn-bd:transparent;
+  --tag:#1E2922; --tag-ink:#AFBCB2; --tag-bd:transparent;
+  --track:#1E2922; --fill:#D9A441;
+  --photo:#24312A; --input:#131B17;
   --shadow-pop:0 8px 28px rgba(0,0,0,0.5);
 }
 
@@ -153,17 +163,17 @@ input::placeholder,textarea::placeholder{color:var(--muted);}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);
   box-shadow:0 0 0 3px var(--accent-wash);background:var(--surface);}
 select{appearance:none;-webkit-appearance:none;padding-right:30px;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%237D7264' stroke-width='1.5' fill='none'/></svg>");
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%235F6B62' stroke-width='1.5' fill='none'/></svg>");
   background-repeat:no-repeat;background-position:right 12px center;}
 /* The arrow lives in a data URI, which cannot read var(), so the dark colour
    is a second literal — kept next to the light one so they stay in sync. */
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]) select{
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%2393887A' stroke-width='1.5' fill='none'/></svg>");
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%238B9990' stroke-width='1.5' fill='none'/></svg>");
   }
 }
 :root[data-theme="dark"] select{
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%2393887A' stroke-width='1.5' fill='none'/></svg>");
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%238B9990' stroke-width='1.5' fill='none'/></svg>");
 }
 .check-row{display:flex;gap:17px;flex-wrap:wrap;margin-top:13px;align-items:center;}
 .check{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-soft);cursor:pointer;}
