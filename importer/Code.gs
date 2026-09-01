@@ -28,15 +28,24 @@ function importAlerts() { return run(false); }
    relabels nothing. Check the execution log. */
 function dryRun() { return run(true); }
 
-/* Run once by hand after setting the script properties. */
+/* Run this FIRST, before building the Gmail filter. It only creates the three
+   labels — no trigger, no writes, no properties needed. Once they exist you
+   can pick the label off a dropdown when making the filter instead of typing
+   a nested name and hoping the slash is interpreted the way you meant. */
+function createLabels() {
+  getLabel(LABEL_IN); getLabel(LABEL_DONE); getLabel(LABEL_STUCK);
+  Logger.log('Labels ready:\n  ' + [LABEL_IN, LABEL_DONE, LABEL_STUCK].join('\n  '));
+}
+
+/* Run once by hand, last, after dryRun looks right. */
 function installTrigger() {
   var existing = ScriptApp.getProjectTriggers();
   for (var i = 0; i < existing.length; i++) {
     if (existing[i].getHandlerFunction() === 'importAlerts') ScriptApp.deleteTrigger(existing[i]);
   }
   ScriptApp.newTrigger('importAlerts').timeBased().everyMinutes(30).create();
-  getLabel(LABEL_IN); getLabel(LABEL_DONE); getLabel(LABEL_STUCK);
-  Logger.log('Trigger installed: importAlerts every 30 minutes. Labels created.');
+  createLabels();
+  Logger.log('Trigger installed: importAlerts every 30 minutes.');
 }
 
 /* =====================================================================

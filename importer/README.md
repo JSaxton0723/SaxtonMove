@@ -37,14 +37,31 @@ the dedupe key.
 
 ## Setup
 
-### 1 — Gmail filters
+### 1 — Gmail filter
 
-In `saxtonmove@gmail.com`, create a filter for each sender:
+Do this **after** step 3's first two sub-steps, so the labels already exist and
+you can pick one off a dropdown rather than typing a nested name. Order:
+create the Apps Script project → run `createLabels()` → come back here.
 
-- `from:redfin.com` → **Apply label** `HouseHunt/Alerts`, **Skip the Inbox**
-- `from:zillow.com` → same
+In `saxtonmove@gmail.com`: **Settings ⚙ → See all settings → Filters and
+Blocked Addresses → Create a new filter**.
 
-The label is created for you by `installTrigger()` if it doesn't exist.
+In the **Has the words** box (not *From* — see below):
+
+```
+from:(redfin.com OR zillow.com)
+```
+
+**Create filter** → tick **Apply the label** → choose `HouseHunt/Alerts` →
+also tick **Skip the Inbox** and **Also apply filter to matching conversations**
+→ **Create filter**.
+
+Two reasons it goes in *Has the words* rather than the *From* box: that box
+wants literal addresses and won't take an `OR`, and `from:redfin.com` matches
+the whole domain, so it keeps working when Redfin sends from `redmail@`,
+`no-reply@` or anything else at `redfin.com`. Your sample arrives from
+`Redfin <redmail@redfin.com>`; a filter pinned to that exact address would miss
+the others.
 
 ### 2 — Service account
 
@@ -68,7 +85,9 @@ the download once step 3 is done.
 2. Paste `Code.gs` into the default file. **Add a second file** (＋ → Script)
    named `parse.gs` and paste `parse.gs.js` into it. Apps Script shares one
    global scope across files, so `Code.gs` can call `parseAlert()` directly.
-3. **Project Settings → Script Properties → Add script property**, three of them:
+3. Run **`createLabels`** once — it only makes the three labels, nothing else,
+   and needs no properties. Now go back and do step 1, then return here.
+4. **Project Settings → Script Properties → Add script property**, three of them:
 
    | Property | Value |
    |---|---|
@@ -76,10 +95,10 @@ the download once step 3 is done.
    | `SA_CLIENT_EMAIL` | `client_email` from the JSON |
    | `SA_PRIVATE_KEY` | `private_key` from the JSON — the whole thing, `-----BEGIN PRIVATE KEY-----` to `-----END PRIVATE KEY-----`. Literal `\n` or real newlines both work. |
 
-4. Run **`dryRun`** once. Authorise when prompted (it's your own script, so the
+5. Run **`dryRun`** once. Authorise when prompted (it's your own script, so the
    "unverified app" screen is expected — **Advanced → Go to project**). It
    writes nothing; check **Execution log** for `WOULD WRITE …` lines.
-5. When that looks right, run **`installTrigger`** once. Done.
+6. When that looks right, run **`installTrigger`** once. Done.
 
 ## Running it
 
@@ -87,7 +106,8 @@ the download once step 3 is done.
 |---|---|
 | `dryRun()` | Parses and logs, writes nothing, relabels nothing. Safe any time. |
 | `importAlerts()` | The real thing. Also what the trigger calls. |
-| `installTrigger()` | Creates the 30-minute trigger and the three labels. Idempotent. |
+| `createLabels()` | Creates the three labels and nothing else. Run this before making the Gmail filter. |
+| `installTrigger()` | Creates the 30-minute trigger (and the labels). Idempotent — safe to re-run. |
 
 ## How dedupe works
 
